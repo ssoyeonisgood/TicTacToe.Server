@@ -33,9 +33,17 @@ public class GameController : ControllerBase
 
         return Ok(game);
     }
+
+    [HttpGet("games")]
+    public ActionResult<IReadOnlyDictionary<string, GameState>> GetAllGames()
+    {
+        IReadOnlyDictionary<string, GameState> games = _gameService.GetAllGame();
+        return Ok(games);
+    }
 }
 
 public class CreateGameRequest
 {
     public string PlayerName { get; set; }
 }
+    

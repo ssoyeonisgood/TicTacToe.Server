@@ -9,19 +9,68 @@ public class GameService
 
     // ConcurrentDictionary is thread-safe, allowing multiple users to play simultaneously
     private readonly ConcurrentDictionary<string, GameState> _games = new();
+    private readonly List<User> _users = new List<User>();
 
-    public GameState CreateGame(string playerName)
+
+    public User? CreateUser(string playerName)
     {
+        bool isExist = DoesUserExist(playerName);
+        if (isExist)
+        {
+            return null;
+        }
+        var player = new User
+        {
+            Name = playerName
+        };
+
+        _users.Add(player);
+
+        return player;
+    }
+    public GameState CreateGame(User user)
+    {
+
         var game = new GameState
         {
-            PlayerX = playerName
+            Player1 = user
         };
 
         _games[game.GameId] = game;
         return game;
     }
 
-    public GameState MakeMove(string gameId, int index)
+    public List<User> AddUser(User user)
+    {
+        _users.Add(user);
+        return _users;
+    }
+
+    public User? SetSymbol(string playerName, char symbol)
+    {
+        var user = _users.FirstOrDefault(u => u.Name == playerName);
+        if (user == null)
+            return null;
+
+        user.Symbol = symbol;
+        return user;
+    }
+
+    public GameState? SetFirstTurn(string gameId, User user)
+    {
+        if (!_games.TryGetValue(gameId, out var game))
+            return null;
+
+        game.CurrentTurn = user;
+        return game;
+    }
+
+    private bool DoesUserExist(string playerName)
+    {
+        return _users.Any(u => u.Name == playerName);
+    }
+
+    public GameState? MakeMove(string gameId, int index)
     {
         if (!_games.TryGetValue(gameId, out var game))
             return null;
@@ -30,12 +79,12 @@ public class GameService
         if (game.IsFinished || game.Board[index] != '\0')
             return game;
 
-        game.Board[index] = game.CurrentTurn;
+        game.Board[index] = game.CurrentTurn.Symbol == 'X' ? 'X' : 'O';
 
         CheckWinner(game);
 
         if (!game.IsFinished)
-            game.CurrentTurn = game.CurrentTurn == 'X' ? 'O' : 'X';
+            game.CurrentTurn = game.CurrentTurn == game.Player1 ? game.Player2 : game.Player1;
 
         return game;
     }
@@ -74,6 +123,11 @@ public class GameService
     {
         _games.TryGetValue(gameId, out var game);
         return game;
+    }
+
+    public IReadOnlyDictionary<string, GameState> GetAllGame()
+    {
+        return _games;
     }
 }
 

@@ -4,10 +4,10 @@
     {
         public string GameId { get; set; } = Guid.NewGuid().ToString();
         public char[] Board { get; set; } = new char[9];
-        public string PlayerX { get; set; }
-        public string PlayerO { get; set; }
-        public char CurrentTurn { get; set; } = 'X';
+        public User? Player1 { get; set; }
+        public User? Player2 { get; set; }
+        public User? CurrentTurn { get; set; }
         public bool IsFinished { get; set; } = false;
-        public string Winner { get; set; }
+        public string? Winner { get; set; }
     }
 }

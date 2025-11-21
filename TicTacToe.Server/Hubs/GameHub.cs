@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Server.Models;
 using TicTacToe.Server.Services;
 
 namespace TicTacToe.Server.Hubs;
@@ -31,8 +32,12 @@ public class GameHub : Hub
             await Clients.Caller.SendAsync("Error", "Game not found.");
             return;
         }
+        var player = new User
+        {
+            Name = playerName
+        };
 
-        game.PlayerO = playerName;
+        game.Player2 = player;
 
         // Add joining user to the group
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
@@ -48,6 +53,12 @@ public class GameHub : Hub
         if (game == null)
         {
             await Clients.Caller.SendAsync("Error", "Game not found.");
+            return;
+        }
+
+        if (game.Player1.Symbol == '\0' || game.Player2.Symbol == '\0')
+        {
+            await Clients.Caller.SendAsync("Error", "All players have not decided the symbol yet.");
             return;
         }
 
