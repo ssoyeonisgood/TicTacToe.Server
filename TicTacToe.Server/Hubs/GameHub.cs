@@ -13,6 +13,30 @@ public class GameHub : Hub
         _gameService = gameService;
     }
 
+    public async Task LoginGame(string playerName)
+    {
+        var isExist = _gameService.DoesUserExist(playerName);
+
+        if (!isExist)
+        {
+            await Clients.Caller.SendAsync("Error", "User does not exist.");
+            return;
+        }
+        await Clients.Caller.SendAsync("UserLogedIn", isExist);
+    }
+
+    public async Task SignUpGame(string playerName)
+    {
+        var isOk = _gameService.CreateUser(playerName);
+        if (!isOk)
+        {
+            await Clients.Caller.SendAsync("Error", "Player name is already taken.");
+            return;
+        }
+
+        await Clients.Caller.SendAsync("UserSignedUp", isOk);
+    }
+
     public async Task CreateGame(string playerName)
     {
         var game = _gameService.CreateGame(playerName);

@@ -12,12 +12,12 @@ public class GameService
     private readonly List<User> _users = new List<User>();
 
 
-    public User? CreateUser(string playerName)
+    public bool CreateUser(string playerName)
     {
         bool isExist = DoesUserExist(playerName);
         if (isExist)
         {
-            return null;
+            return false;
         }
         var player = new User
         {
@@ -26,11 +26,11 @@ public class GameService
 
         _users.Add(player);
 
-        return player;
+        return true;
     }
-    public GameState CreateGame(User user)
+    public GameState CreateGame(string playerName)
     {
-
+        var user = _users.FirstOrDefault(u => u.Name == playerName);
         var game = new GameState
         {
             Player1 = user
@@ -65,7 +65,7 @@ public class GameService
         return game;
     }
 
-    private bool DoesUserExist(string playerName)
+    public bool DoesUserExist(string playerName)
     {
         return _users.Any(u => u.Name == playerName);
     }
