@@ -15,14 +15,14 @@ public class GameHub : Hub
 
     public async Task LoginGame(string playerName)
     {
-        var isExist = _gameService.DoesUserExist(playerName);
+        var user = _gameService.DoesUserExist(playerName);
 
-        if (!isExist)
+        if (user == null)
         {
             await Clients.Caller.SendAsync("Error", "User does not exist.");
             return;
         }
-        await Clients.Caller.SendAsync("UserLogedIn", isExist);
+        await Clients.Caller.SendAsync("UserLoggedIn", user);
     }
 
     public async Task SignUpGame(string playerName)

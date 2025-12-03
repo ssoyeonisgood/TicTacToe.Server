@@ -14,8 +14,8 @@ public class GameService
 
     public bool CreateUser(string playerName)
     {
-        bool isExist = DoesUserExist(playerName);
-        if (isExist)
+        var existedUser = DoesUserExist(playerName);
+        if (existedUser != null)
         {
             return false;
         }
@@ -65,9 +65,10 @@ public class GameService
         return game;
     }
 
-    public bool DoesUserExist(string playerName)
+    public User DoesUserExist(string playerName)
     {
-        return _users.Any(u => u.Name == playerName);
+        var user = _users.FirstOrDefault(u => u.Name == playerName);
+        return user;
     }
 
     public GameState? MakeMove(string gameId, int index)
