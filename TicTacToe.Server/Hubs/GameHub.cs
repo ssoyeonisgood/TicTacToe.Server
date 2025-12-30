@@ -56,10 +56,13 @@ public class GameHub : Hub
             await Clients.Caller.SendAsync("Error", "Game not found.");
             return;
         }
-        var player = new User
+        var player = _gameService.GetUser(playerName);
+
+        if(player == null)
         {
-            Name = playerName
-        };
+            await Clients.Caller.SendAsync("Error", "User not found.");
+            return;
+        }
 
         game.Player2 = player;
 
@@ -67,7 +70,8 @@ public class GameHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
 
         // Notify both X and O players
-        await Clients.Group(gameId).SendAsync("GameJoined", game);
+        await Clients.Group(gameId).SendAsync("GameJoined", game); 
+        await Clients.Group(gameId).SendAsync("GameUpdated", game);
     }
 
     public async Task MakeMove(string gameId, int index)

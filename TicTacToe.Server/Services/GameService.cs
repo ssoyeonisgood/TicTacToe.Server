@@ -28,6 +28,12 @@ public class GameService
 
         return true;
     }
+
+    public User GetUser(string playerName)
+    {
+        var user = _users.FirstOrDefault(u => u.Name == playerName);
+        return user;
+    }
     public GameState CreateGame(string playerName)
     {
         var user = _users.FirstOrDefault(u => u.Name == playerName);
@@ -107,7 +113,7 @@ public class GameService
             {
                 game.IsFinished = true;
                 // game.Board[w[0]] is a char ('X' or 'O'), convert to string for Winner
-                game.Winner = game.Board[w[0]].ToString();
+                //game.Winner = game.Board[w[0]].ToString();
                 return;
             }
         }
@@ -116,7 +122,7 @@ public class GameService
         if (game.Board.All(c => c != '\0'))
         {
             game.IsFinished = true;
-            game.Winner = "Draw";
+            game.status = "Draw";
         }
     }
 

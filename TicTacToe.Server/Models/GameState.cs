@@ -8,6 +8,8 @@
         public User? Player2 { get; set; }
         public User? CurrentTurn { get; set; }
         public bool IsFinished { get; set; } = false;
-        public string? Winner { get; set; }
+
+        public string status = "";
+        public User? Winner { get; set; }
     }
 }
